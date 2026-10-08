@@ -13,11 +13,16 @@ for(const[e,i]of pl){const x1=X(e.start),x2=X(e.end),y=14+i*(lh+2),bx=Math.max(0
 x.fillStyle=e.id===sel?'#388bfd':T>=e.start&&T<e.end?'#1f6feb':e.type==='Comment'?'#30363d':'#1c3a5e';x.fillRect(bx,y,bw,lh);if(e.id===sel){x.strokeStyle='#79c0ff';x.strokeRect(bx+.5,y+.5,bw-1,lh-1)}
 if(bw>24){x.save();x.beginPath();x.rect(bx,y,bw,lh);x.clip();x.fillStyle='#e6edf3';x.fillText(strip(e.text),bx+4,y+lh/2+3);x.restore()}hits.push({e,x1,x2,y,h:lh})}
 const cx=X(T);x.strokeStyle='#f85149';x.lineWidth=1.5;x.beginPath();x.moveTo(cx,0);x.lineTo(cx,hh);x.stroke();x.lineWidth=1}
-TLc.addEventListener('pointerdown',ev=>{const r=TLc.getBoundingClientRect(),px=ev.clientX-r.left,py=ev.clientY-r.top;TLc.setPointerCapture(ev.pointerId);
-const H=hits.find(q=>px>=q.x1-4&&px<=q.x2+4&&py>=q.y&&py<=q.y+q.h);
-if(H){const e=H.e,w=H.x2-H.x1;select(e.id);drag={m:w<28?'m':px-H.x1<10?'s':H.x2-px<10?'e':'m',e,px,s:e.start,en:e.end,ch:0}}else{drag={m:'x'};seek(tv0+px/r.width*span)}});
-TLc.addEventListener('pointermove',ev=>{if(!drag)return;const r=TLc.getBoundingClientRect(),px=ev.clientX-r.left;if(drag.m==='x')return seek(tv0+px/r.width*span);
-const e=drag.e,dt=(px-drag.px)/r.width*span;drag.ch=1;if(drag.m==='s')e.start=clamp(drag.s+dt,0,e.end-.05);else if(drag.m==='e')e.end=Math.max(e.start+.05,drag.en+dt);else{e.start=Math.max(0,drag.s+dt);e.end=e.start+drag.en-drag.s}dirty=1});
-const tlEnd=()=>{if(drag&&drag.ch){chg('tl');renderEdit()}drag=null};TLc.addEventListener('pointerup',tlEnd);TLc.addEventListener('pointercancel',tlEnd);
+const tlP=new Map();let tlG=null;
+TLc.addEventListener('pointerdown',ev=>{TLc.setPointerCapture(ev.pointerId);tlP.set(ev.pointerId,{x:ev.clientX,y:ev.clientY});
+if(tlP.size===1){drag={m:'pan',x0:ev.clientX,y0:ev.clientY,tv:tv0,moved:false};tlG=null}
+else if(tlP.size===2){const[p,q]=[...tlP.values()];tlG={d:Math.hypot(p.x-q.x,p.y-q.y)||1,span,mx:(p.x+q.x)/2};if(drag)drag.moved=true}});
+TLc.addEventListener('pointermove',ev=>{if(!tlP.has(ev.pointerId))return;tlP.set(ev.pointerId,{x:ev.clientX,y:ev.clientY});const r=TLc.getBoundingClientRect();
+if(tlP.size>=2&&tlG){const[p,q]=[...tlP.values()],d=Math.hypot(p.x-q.x,p.y-q.y)||1,fx=((p.x+q.x)/2-r.left)/r.width,tAt=tv0+fx*span;span=clamp(tlG.span*tlG.d/d,2,Math.max(dur(),2));tv0=tAt-fx*span;dirty=1;return}
+if(!drag||drag.m!=='pan')return;const dx=ev.clientX-drag.x0;if(Math.abs(dx)>6||Math.abs(ev.clientY-drag.y0)>6)drag.moved=true;
+if(drag.moved){tv0=clamp(drag.tv-dx/r.width*span,0,Math.max(0,dur()-span));dirty=1}});
+const tlEnd=ev=>{const d=drag;tlP.delete(ev.pointerId);if(tlP.size<2)tlG=null;if(tlP.size===0){drag=null;if(d&&d.m==='pan'&&!d.moved&&ev.type==='pointerup'){const r=TLc.getBoundingClientRect(),px=ev.clientX-r.left,py=ev.clientY-r.top,H=hits.find(q=>px>=q.x1-4&&px<=q.x2+4&&py>=q.y&&py<=q.y+q.h);if(H)select(H.e.id);seek(tv0+px/r.width*span)}}else if(tlP.size===1){const[p]=[...tlP.values()];drag={m:'pan',x0:p.x,y0:p.y,tv:tv0,moved:true}}};
+TLc.addEventListener('pointerup',tlEnd);TLc.addEventListener('pointercancel',tlEnd);
+function tlCenter(e){const D=dur(),mid=(e.start+e.end)/2;tv0=clamp(e.end-e.start>span*.8?e.start-span*.1:mid-span/2,0,Math.max(0,D-span));dirty=1}
 TLc.addEventListener('wheel',ev=>{ev.preventDefault();tv0+=(ev.deltaX||ev.deltaY)/TLc.clientWidth*span;dirty=1},{passive:false});
 const zoom=k=>{span=clamp(span*k,2,Math.max(dur(),2));tv0=T-span/2;dirty=1};$('#zi').onclick=()=>zoom(1/1.5);$('#zo').onclick=()=>zoom(1.5);$('#pan').oninput=ev=>{tv0=+ev.target.value;dirty=1};

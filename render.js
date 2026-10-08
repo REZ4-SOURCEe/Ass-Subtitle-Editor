@@ -1,17 +1,17 @@
 /* tag parser + renderer */
-const TR=/\\(pos|move|fade?|i?clip|org|an|alpha|[1-4]a|bord|shad|blur|be|fscx|fscy|fsp|fn|fs|frz|fr|[1-4]c|c|b|i|u|s|r|p|kf|ko|k|K|q|a)(\([^)]*\)|[^\\]*)/g,RT=/[\u0590-\u08FF\uFB1D-\uFEFF]/;
+const TR=/\\(pos|move|fade?|i?clip|org|an|alpha|[1-4]a|bord|shad|blur|be|fscx|fscy|fsp|fn|fs|frx|fry|frz|fr|[1-4]c|c|b|i|u|s|r|p|kf|ko|k|K|q|a)(\([^)]*\)|[^\\]*)/g,RT=/[\u0590-\u08FF\uFB1D-\uFEFF]/;
 function pt(text){const ov={},lines=[[]];let o={};
 for(const part of text.split(/(\{[^}]*\})/)){if(part[0]==='{'&&part.endsWith('}')){const b=part.slice(1,-1).replace(/\\t\((?:[^()]|\([^)]*\))*\)/g,'');let m;TR.lastIndex=0;
 while((m=TR.exec(b))){const n=m[1],a=m[2],f=parseFloat(a),ar=()=>a.slice(1,-1).split(',').map(Number);
 switch(n){case'pos':{const p=ar();if(p.length>1)ov.pos=p}break;case'move':{const p=ar();if(p.length>=4)ov.move=p}break;case'fad':case'fade':{const p=ar();if(p.length===2)ov.fad=p}break;case'an':ov.an=f;break;case'frz':case'fr':ov.frz=f;break;
-case'fs':o.fs=f;break;case'fn':o.fn=a;break;case'b':o.b=a!=='0';break;case'i':o.i=a!=='0';break;case'u':o.u=a!=='0';break;case's':o.s=a!=='0';break;case'c':case'1c':o.c=a2c(a);break;case'3c':o.oc=a2c(a);break;case'4c':o.bc=a2c(a);break;case'bord':o.bord=f;break;case'shad':o.shad=f;break;case'blur':case'be':o.blur=f;break;case'alpha':o.al=(parseInt(a.replace(/[^0-9a-f]/gi,''),16)||0)/255;break;case'fsp':o.sp=f;break;case'p':o.p=f;break;case'r':o={};break}}continue}
+case'fs':o.fs=f;break;case'fn':o.fn=a;break;case'b':o.b=a!=='0';break;case'i':o.i=a!=='0';break;case'u':o.u=a!=='0';break;case's':o.s=a!=='0';break;case'c':case'1c':o.c=a?a2c(a):0;break;case'3c':o.oc=a?a2c(a):0;break;case'4c':o.bc=a?a2c(a):0;break;case'bord':o.bord=f;break;case'shad':o.shad=f;break;case'blur':case'be':o.blur=f;break;case'alpha':o.al=(parseInt(a.replace(/[^0-9a-f]/gi,''),16)||0)/255;break;case'fsp':o.sp=f;break;case'p':o.p=f;break;case'r':o={};break}}continue}
 part.split(/\\N|\\n/).forEach((s,i)=>{if(i)lines.push([]);s=s.replace(/\\h/g,'\u00a0');if(s)lines[lines.length-1].push({t:s,o:{...o}})})}
 return{lines,ov}}
 const cvs=$('#cv'),vb=$('#vb');
 function fit(){const W=vb.clientWidth,H=vb.clientHeight,ar=hasVideo&&V.videoWidth?V.videoWidth/V.videoHeight:(num(gi('PlayResX'),1920)/num(gi('PlayResY'),1080)||16/9);let w=W,hh=W/ar;if(hh>H){hh=H;w=H*ar}return{w:Math.round(w),h:Math.round(hh),l:Math.round((W-w)/2),t:Math.round((H-hh)/2)}}
 let lastKey='';const PC=new Map(),pc=t=>{let r=PC.get(t);if(!r){if(PC.size>500)PC.clear();r=pt(t);PC.set(t,r)}return r};
-function drawSubs(force){const f=fit(),dpr=devicePixelRatio||1;if(cvs._w!==f.w||cvs._h!==f.h||cvs._d!==dpr){force=1;cvs._w=f.w;cvs._h=f.h;cvs._d=dpr;cvs.width=f.w*dpr;cvs.height=f.h*dpr;for(const el of[cvs,V])Object.assign(el.style,{left:f.l+'px',top:f.t+'px',width:f.w+'px',height:f.h+'px'})}
-const x=cvs.getContext('2d'),LS='letterSpacing'in x;x.setTransform(dpr,0,0,dpr,0,0);const act=A.ev.filter(e=>e.type==='Dialogue'&&T>=e.start&&T<e.end).sort((a,b)=>a.layer-b.layer),key=act.map(e=>e.id+e.text).join('|')+f.w;
+function drawSubs(force){if(!vb.clientWidth)return;const f=fit(),dpr=devicePixelRatio||1;if(cvs._w!==f.w||cvs._h!==f.h||cvs._d!==dpr){force=1;cvs._w=f.w;cvs._h=f.h;cvs._d=dpr;cvs.width=f.w*dpr;cvs.height=f.h*dpr;for(const el of[cvs,V])Object.assign(el.style,{left:f.l+'px',top:f.t+'px',width:f.w+'px',height:f.h+'px'})}
+const x=cvs.getContext('2d'),LS='letterSpacing'in x;x.setTransform(dpr,0,0,dpr,0,0);const act=A.ev.map(e=>drafts.get(e.id)||e).filter(e=>e.type==='Dialogue'&&T>=e.start&&T<e.end).sort((a,b)=>a.layer-b.layer),key=act.map(e=>e.id+e.text).join('|')+f.w;
 if(!force&&key===lastKey&&!act.some(e=>/\\(move|fad)/.test(e.text)))return;lastKey=key;x.clearRect(0,0,f.w,f.h);
 const sx=f.w/(num(gi('PlayResX'),1920)||1920),sy=f.h/(num(gi('PlayResY'),1080)||1080),placed=[];
 for(const e of act){const S=A.styles.find(s=>s.name===e.style)||A.styles[0],{lines,ov}=pc(e.text);
