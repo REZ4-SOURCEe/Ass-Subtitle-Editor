@@ -57,3 +57,4 @@ $('#fs').onclick=()=>fsOn()?exitFS():enterFS();$('#fcx').onclick=exitFS;
 $('#fcp').onclick=()=>{play(!playing);showFC()};$('#fcb').onclick=()=>{seek(T-5);showFC()};$('#fcf').onclick=()=>{seek(T+5);showFC()};$('#fcs').oninput=ev=>{seek(+ev.target.value);showFC()};
 vb.onclick=ev=>{if(fsOn()){if(!ev.target.closest('#fc')){const c=$('#fc');if(c.classList.contains('show'))c.classList.remove('show');else showFC()}return}play(!playing)};
 document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement){try{screen.orientation.unlock()}catch(e){}if(!vb.classList.contains('fsx'))$('#fc').classList.remove('show');dirty=1}});
+if(window.ResizeObserver)new ResizeObserver(()=>{dirty=1}).observe(vb);addEventListener('resize',()=>{dirty=1});addEventListener('orientationchange',()=>{[100,400,900].forEach(t=>setTimeout(()=>{dirty=1},t))});document.addEventListener('fullscreenchange',()=>{[0,150,500].forEach(t=>setTimeout(()=>{dirty=1},t))});

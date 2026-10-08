@@ -80,7 +80,7 @@ function renderStyles(){const P=$('#styles');P.textContent='';ss=clamp(ss,0,A.st
 const uniq=n=>{let k=2;while(A.styles.some(s=>s.name===n+'_'+k))k++;return n+'_'+k};
 const up=(k,v)=>{S[k]=v;dirty=1;commit('st'+k+ss)};
 const nf=(l,k,st=1)=>{const i=h('input',{type:'number',step:st,value:S[k],oninput:()=>{if(i.value!=='')up(k,num(i.value,0))}});return h('label',{class:'f'},l,i)};
-const cf=(l,k)=>{const c=a2c(S[k]),ci=h('input',{type:'color',value:hex(c),oninput:()=>{const v=ci.value,o=a2c(S[k]);up(k,c2a({...o,r:parseInt(v.slice(1,3),16),g:parseInt(v.slice(3,5),16),b:parseInt(v.slice(5,7),16)}))}}),ai=h('input',{type:'number',min:0,max:255,value:c.a,title:'Transparency 0-255',placeholder:'Alpha',oninput:()=>up(k,c2a({...a2c(S[k]),a:clamp(num(ai.value,0),0,255)}))});return h('div',{class:'cc2'},h('span',{},l),h('div',{class:'cr'},ci,ai))};
+const cf=(l,k)=>{const c=a2c(S[k]),ci=h('button',{class:'cpsw','aria-label':l+' color',onclick:()=>{openColorSheet(l,hex(a2c(S[k])),v=>{const o=a2c(S[k]);up(k,c2a({...o,r:parseInt(v.slice(1,3),16),g:parseInt(v.slice(3,5),16),b:parseInt(v.slice(5,7),16)}));ci.style.background=v})}});ci.style.background=hex(c);const ai=h('input',{type:'number',min:0,max:255,value:c.a,title:'Transparency 0-255',placeholder:'Alpha',oninput:()=>up(k,c2a({...a2c(S[k]),a:clamp(num(ai.value,0),0,255)}))});return h('div',{class:'cc2'},h('span',{},l),h('div',{class:'cr'},ci,ai))};
 const cb=(l,k)=>h('label',{class:'f c'},h('input',{type:'checkbox',checked:S[k]!=0,onchange:ev=>up(k,ev.target.checked?-1:0)}),l);
 const ni=h('input',{value:S.name,onchange:()=>{const nm=ni.value.replace(/,/g,' ').trim();if(!nm||A.styles.some(s=>s!==S&&s.name===nm)){ni.value=S.name;return}A.ev.forEach(e=>{if(e.style===S.name)e.style=nm});S.name=nm;commit('srn');renderStyles();renderList();renderEdit()}});
 const fontPick=()=>{const inp=h('input',{value:S.fontname,spellcheck:'false',oninput:()=>up('fontname',inp.value.replace(/,/g,''))}),list=h('div',{class:'dd'});list.hidden=true;
@@ -123,3 +123,8 @@ const item=(n,tag)=>h('button',{class:'di'+(n===inp.value?' on':''),style:'font-
 const build=()=>{list.textContent='';const emb=F.map(x=>x.family);if(emb.length)list.append(h('div',{class:'dh'},'Embedded in this file'),...emb.map(n=>item(n,'embedded')));list.append(h('div',{class:'dh'},'Common'),...['Arial','Tahoma','Vazirmatn','Noto Naskh Arabic','Noto Sans','Impact','Georgia','Times New Roman'].filter(n=>!emb.includes(n)).map(n=>item(n)))};
 const btn=h('button',{'aria-label':'Show fonts',onclick:()=>{if(list.hidden){build();list.hidden=false}else list.hidden=true}},ico('chev'));
 return h('div',{class:'fp'},h('div',{class:'fi'},inp,btn),list)}
+
+function openColorSheet(title,hexv,on){
+const ov=h('div',{class:'cpm'}),close=()=>ov.remove();
+ov.append(h('div',{class:'cpc'},h('h3',{},title),colorPicker(hexv,on),h('button',{class:'p',onclick:close},'OK')));
+ov.onclick=ev=>{if(ev.target===ov)close()};document.body.append(ov)}

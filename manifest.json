@@ -1,7 +1,7 @@
 {
  "id": "./",
  "name": "Subtitle Editor",
- "short_name": "Subtitles",
+ "short_name": "Subtitle Editor",
  "description": "Edit, preview and export ASS/SRT subtitles",
  "start_url": "./index.html",
  "scope": "./",
