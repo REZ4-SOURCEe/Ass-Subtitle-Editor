@@ -1,3 +1,5 @@
+const fkc=new Map();function fk(fn){let k=fkc.get(fn);if(k)return k;k=1;try{const c=document.createElement('canvas').getContext('2d');c.font=`100px "${fn}",Vazirmatn,Tahoma,"Noto Sans",Arial,sans-serif`;const m=c.measureText('Hg'),a=m.fontBoundingBoxAscent,d=m.fontBoundingBoxDescent;if(a>0&&d>0)k=clamp(100/(a+d),.4,1.2)}catch(e){}fkc.set(fn,k);return k}
+if(document.fonts&&document.fonts.addEventListener)document.fonts.addEventListener('loadingdone',()=>{fkc.clear();dirty=1});
 /* tag parser + renderer */
 const TR=/\\(pos|move|fade?|i?clip|org|an|alpha|[1-4]a|bord|shad|blur|be|fscx|fscy|fsp|fn|fs|frx|fry|frz|fr|[1-4]c|c|b|i|u|s|r|p|kf|ko|k|K|q|a)(\([^)]*\)|[^\\]*)/g,RT=/[\u0590-\u08FF\uFB1D-\uFEFF]/;
 function pt(text){const ov={},lines=[[]];let o={};
@@ -15,7 +17,7 @@ const x=cvs.getContext('2d'),LS='letterSpacing'in x;x.setTransform(dpr,0,0,dpr,0
 if(!force&&key===lastKey&&!act.some(e=>/\\(move|fad)/.test(e.text)))return;lastKey=key;x.clearRect(0,0,f.w,f.h);
 const sx=f.w/(num(gi('PlayResX'),1920)||1920),sy=f.h/(num(gi('PlayResY'),1080)||1080),placed=[];
 for(const e of act){const S=A.styles.find(s=>s.name===e.style)||A.styles[0],{lines,ov}=pc(e.text);
-const L=lines.map(l=>{let w=0,lh=S.fontsize*sy*1.2;const rs=[];for(const r of l){const o=r.o;if(o.p>0)continue;const fs=(o.fs??S.fontsize)*sy,sp=(o.sp??S.spacing)*sx,font=`${(o.i??(S.italic!=0))?'italic ':''}${(o.b??(S.bold!=0))?700:400} ${fs}px "${o.fn||S.fontname}",Vazirmatn,Tahoma,"Noto Sans",Arial,sans-serif`;x.font=font;if(LS)x.letterSpacing=sp+'px';const rw=x.measureText(r.t).width;rs.push({t:r.t,o,fs,sp,font,w:rw});w+=rw;lh=Math.max(lh,fs*1.2)}return{rs,w,lh,rtl:RT.test(l.map(r=>r.t).join(''))}});
+const L=lines.map(l=>{let w=0,lh=S.fontsize*sy*1.1;const rs=[];for(const r of l){const o=r.o;if(o.p>0)continue;const fs0=(o.fs??S.fontsize)*sy,fs=fs0*fk(o.fn||S.fontname),sp=(o.sp??S.spacing)*sx,font=`${(o.i??(S.italic!=0))?'italic ':''}${(o.b??(S.bold!=0))?700:400} ${fs}px "${o.fn||S.fontname}",Vazirmatn,Tahoma,"Noto Sans",Arial,sans-serif`;x.font=font;if(LS)x.letterSpacing=sp+'px';const rw=x.measureText(r.t).width;rs.push({t:r.t,o,fs,sp,font,w:rw});w+=rw;lh=Math.max(lh,fs0*1.1)}return{rs,w,lh,rtl:RT.test(l.map(r=>r.t).join(''))}});
 if(!L.some(l=>l.rs.length))continue;const H=L.reduce((s,l)=>s+l.lh,0),an=ov.an||S.alignment,col=(an-1)%3,row=an<=3?2:an<=6?1:0;
 const mL=(e.marginl||S.marginl)*sx,mR=(e.marginr||S.marginr)*sx,mV=(e.marginv||S.marginv)*sy;let p=ov.pos;
 if(!p&&ov.move){const m=ov.move,d=(e.end-e.start)*1000,t1=m[4]??0,t2=m[5]??d,k=t2>t1?clamp(((T-e.start)*1000-t1)/(t2-t1),0,1):1;p=[m[0]+(m[2]-m[0])*k,m[1]+(m[3]-m[1])*k]}

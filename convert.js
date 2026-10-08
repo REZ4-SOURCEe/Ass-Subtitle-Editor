@@ -6,7 +6,7 @@ if(b.trim()){if(o.dir==='rtl')b='\u202B'+b+'\u202C';else if(o.dir==='ltr')b='\u2
 return pre+b}
 function xf(t,o){if(!o||(!o.nodot&&o.dir!=='rtl'&&o.dir!=='ltr'))return t;if(o.dir==='rtl'||o.dir==='ltr')t=t.replace(MK,'');return t.split('\\N').map(l=>fixLine(l,o)).join('\\N')}
 const h2a=l=>l.replace(/<\s*(\/?)\s*([ibus])\s*>/gi,(_,c,k)=>'{\\'+k.toLowerCase()+(c?'0':'1')+'}').replace(/<font[^>]*color\s*=\s*["']?#?([0-9a-f]{6})["']?[^>]*>/gi,(_,h)=>'{\\c&H'+h.slice(4,6)+h.slice(2,4)+h.slice(0,2)+'&}').replace(/<\/font>/gi,'{\\c}').replace(/<[^>]+>/g,'').replace(/&nbsp;/g,'\\h').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');
-function parseSrt(t,name){const R=newA();R.styles=[{...DS}];R.info[0]='Title: '+(name||'Untitled');
+function parseSrt(t,name){const R=newA();R.styles=[{...DS,fontsize:80,outline:3,shadow:1.5,marginv:50}];R.info[0]='Title: '+(name||'Untitled');
 const re=/^(?:(\d+):)?(\d+):(\d+)[,.](\d{1,3})\s*-->\s*(?:(\d+):)?(\d+):(\d+)[,.](\d{1,3})/,tc=(h,m,s,ms)=>(+h||0)*3600+(+m)*60+(+s)+(+((ms+'00').slice(0,3)))/1000;let rt=0;
 for(const blk of t.replace(/^\uFEFF/,'').replace(/\r\n?/g,'\n').split(/\n{2,}/)){const L=blk.split('\n'),i=L.findIndex(l=>re.test(l.trim()));if(i<0)continue;const m=L[i].trim().match(re),txt=L.slice(i+1).filter(l=>l.trim()).map(l=>h2a(l.trim())).join('\\N');if(!txt)continue;if(/[\u0590-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF]/.test(txt))rt++;
 R.ev.push({id:gid(),type:'Dialogue',layer:0,start:tc(m[1],m[2],m[3],m[4]),end:tc(m[5],m[6],m[7],m[8]),style:'Default',name:'',marginl:0,marginr:0,marginv:0,effect:'',text:txt})}
