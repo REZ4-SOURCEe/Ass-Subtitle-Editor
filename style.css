@@ -40,3 +40,14 @@ body.kb #tl{display:none}body.kb #vb{height:24vh}
 .ag{grid-template-columns:repeat(3,minmax(0,1fr));max-width:240px;margin:0 auto;width:100%}
 
 .fp{display:block;width:100%;min-width:0}.fp>.fr{flex-direction:row;align-items:center;gap:8px}.fp>.fr>.fi{flex:1;min-width:0}.fp>.dd{display:block;width:100%;box-sizing:border-box;position:static;margin-top:6px}.fp>.dd[hidden]{display:none}.fp .di{text-align:left;gap:8px}.fp .di span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hn{padding:0;text-align:left;font-size:11px}.hn:empty{display:none}.chips.efx button{min-height:28px;min-width:0;padding:2px 10px;font-size:12px}.fxp{display:grid;gap:8px;background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:10px;margin-top:8px}.fxp[hidden]{display:none}.fxh{font-weight:600;font-size:13px}.g1{display:grid;gap:8px}.fxp .f{flex-direction:column;align-items:stretch;gap:2px}
+.fxp input:not([type=range]){width:100%;box-sizing:border-box;min-width:0}.fxp label.f{min-width:0}.fxp{box-sizing:border-box;min-width:0;max-width:100%}
+.cp{display:grid;gap:10px;min-width:0}.cpt{display:flex;gap:8px;align-items:center}.cpv{flex:none;width:44px;height:36px;border-radius:8px;border:1px solid var(--bd)}.cph{flex:1;font-family:ui-monospace,monospace;text-transform:uppercase}
+.cpl{display:grid;gap:4px;font-size:11px;color:var(--mt)}.cps{-webkit-appearance:none;appearance:none;display:block;width:100%;box-sizing:border-box;height:18px;min-height:0;padding:0;border-radius:9px;border:1px solid var(--bd);outline:none}
+.cps::-webkit-slider-runnable-track{height:18px;background:transparent;border:0}.cps::-moz-range-track{height:18px;background:transparent;border:0}
+.cps::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;margin-top:-3px;border-radius:50%;background:#fff;border:3px solid var(--ac);box-shadow:0 0 0 1px #0009}.cps::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:#fff;border:3px solid var(--ac)}
+.cpg{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}.cpp{min-width:0;min-height:0;height:30px;padding:0;border-radius:8px;border:1px solid var(--bd)}.cpp.on{outline:2px solid var(--ac);outline-offset:1px}
+.pn>.sv{bottom:-10px;margin:0 -10px -10px;padding:8px 10px;border-top:1px solid var(--bd);z-index:2}
+#tl{border-bottom:1px solid var(--bd)}
+.fxp .fp>.fi{display:flex;gap:6px;align-items:center}.fxp .fi input:not([type=range]){flex:1;width:auto}
+#xe{color:var(--mt);flex:none}
